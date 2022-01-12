@@ -34,8 +34,18 @@ IS_SLOT_DEVICE=0;
 RAMDISK_COMPRESSION=auto;
 PATCH_VBMETA_FLAG=auto;
 
+# begin passthrough patch
+passthrough() {
+if [ ! "$(getprop persist.sys.fuse.passthrough.enable)" ]; then
+	ui_print "Enabling fuse passthrough..."
+
+	# FUSE Passthrough
+	patch_prop /system/build.prop "persist.sys.fuse.passthrough.enable" "true"
+fi
+} # end passthrough patch
+
 # import functions/variables and setup patching - see for reference (DO NOT REMOVE)
-. tools/ak3-core.sh;
+. tools/ak3-core.sh && passthrough;
 
 # boot install
 dump_boot; # use split_boot to skip ramdisk unpack, e.g. for devices with init_boot ramdisk
